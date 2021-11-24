@@ -3,6 +3,7 @@ package ba.polozi.demo.models;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -12,12 +13,19 @@ public class ConfirmationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     @Column(nullable = false)
+    @NotBlank
     private String token;
+
     @Column(nullable = false)
+    @NotBlank
     private LocalDateTime createdAt;
+
     @Column(nullable = false)
+    @NotBlank
     private LocalDateTime expireAt;
+
     @ManyToOne
     @JoinColumn(
             nullable = false,

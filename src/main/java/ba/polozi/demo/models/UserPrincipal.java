@@ -6,19 +6,39 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Column;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.*;
 
 @Data
 @AllArgsConstructor
 public class UserPrincipal implements UserDetails {
     private Long id;
+
+    @Column(nullable = false)
+    @NotBlank
+    @Email(regexp = ".*@.*\\..*", message = "Email should be valid, e.g. exaple@gmail.com")
     private String email;
+
+    @NotBlank
+    @Column(nullable = false)
+    @Size(min = 7, max = 10, message = "min. 7, max. 10 characters\n" +
+            "Both number and letters are obligatory,\n" +
+            "We accept upper and lower-case letters, numbers and special characters.")
     private String password;
     private GrantedAuthority authority;
+    private Collection<Role> roles;
 
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public static UserDetails create(User entity){
+        GrantedAuthority authority = new SimpleGrantedAuthority("USER");
+        return new UserPrincipal(entity.getId(), entity.getEmail(), entity.getPassword(), authority,  entity.getRoles());
     }
 
     @Override
@@ -61,13 +81,5 @@ public class UserPrincipal implements UserDetails {
         return Objects.hash(id);
     }
 
-    public static UserPrincipal create(User user) {
-        GrantedAuthority authority = new SimpleGrantedAuthority("USER");
-        return new UserPrincipal(
-                user.getId(),
-                user.getEmail(),
-                user.getPassword(),
-                authority
-        );
-    }
+
 }

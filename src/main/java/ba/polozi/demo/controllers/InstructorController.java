@@ -73,8 +73,8 @@ public class InstructorController {
         Instructor i = new Instructor();
         i.setFirstName("amina");
         i.setLastName("sehic");
-        i.setEmail("nekimail");
-        i.setPhoneNumber("123456");
+        i.setEmail("sehic.amina11@gmail.com");
+        i.setPhoneNumber("062453953");
         i.setCar("golf");
         var k = instructorService.saveInstructor(i);
         return ResponseEntity.ok().body(k);

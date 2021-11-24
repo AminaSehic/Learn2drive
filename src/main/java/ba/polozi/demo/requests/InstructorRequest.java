@@ -8,9 +8,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InstructorRequest {
-    String firstName;
-    String lastName;
-    String phoneNumber;
-    String email;
-    String car;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
+    private String username;
+    private String email;
+    private String password;
+    private String car;
 }

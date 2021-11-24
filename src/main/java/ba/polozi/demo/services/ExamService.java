@@ -2,6 +2,7 @@ package ba.polozi.demo.services;
 
 import ba.polozi.demo.models.Exam;
 import ba.polozi.demo.models.Question;
+import ba.polozi.demo.models.User;
 import ba.polozi.demo.repositories.ExamRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,11 @@ public class ExamService {
             return null;
         }
     }
+
+    public List<Exam> findExamsByCandidateId(Long id){
+        return examRepository.findExamById(id);
+    }
+
 
     public void deleteById(Long id) {
         examRepository.deleteById(id);

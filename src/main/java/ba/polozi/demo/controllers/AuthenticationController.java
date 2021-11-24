@@ -22,68 +22,34 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 public class AuthenticationController {
-    private final AuthService appUserService;
+    private final AuthService authService;
     private final ConfirmationTokenService confirmationTokenService;
-
-    @GetMapping("/amina")
-    public String hello() {
-        return "hello world";
-    }
 
     @PostMapping(path = "registration")
     public ResponseEntity<?> register(@Valid @RequestBody RegistrationRequest request) {
-        if (appUserService.exist(request)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((new ErrorMessage(HttpStatus.BAD_REQUEST.value(), "postoji vec taj user")));
+        if (authService.exist(request)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((new ErrorMessage(HttpStatus.BAD_REQUEST.value(), "User already exists! Please try again.")));
         }
-        User result = appUserService.createUserAccount(request);
+        User result = authService.createUserAccount(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/**")
                 .buildAndExpand(result.getUsername()).toUri();
         return ResponseEntity.created(location).body(
                 new RegistrationResponse(
-                        new UserResponse(
-                                result.getId(),
-                                result.getFirstName(),
-                                result.getLastName(),
-                                result.getPhoneNumber(),
-                                result.getUsername(),
-                                result.getEmail()
-                        )
+                        new UserResponse(result)
                 )
         );
     }
+
     @PostMapping(path = "login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
-        String jwt = appUserService.signInUser(loginRequest);
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
-            UserResponse userResponse = new UserResponse(appUserService.getUserByUsername(loginRequest.getEmail()));
-            confirmationTokenService.saveConfirmationToken(new ConfirmationToken(jwt, appUserService.findUserById(userResponse.getId())));
+            String jwt = authService.signInUser(loginRequest);
+            UserResponse userResponse = new UserResponse(authService.getUserByUsername(loginRequest.getEmail()));
+            confirmationTokenService.saveConfirmationToken(new ConfirmationToken(jwt, authService.findUserById(userResponse.getId())));
             return ResponseEntity.ok(new LoginResponse(jwt, userResponse));
-        } catch (Exception e){
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body((new ErrorMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage())));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((new ErrorMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage())));
         }
     }
-
 }
-
-
-//    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-//    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-//
-//        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-//        final UserDetails userDetails = userDetailsService
-//                .loadUserByUsername(authenticationRequest.getUsername());
-//        final String token = jwtUtil.generateToken(userDetails);
-//        return ResponseEntity.ok(new JwtResponse(token));
-//    }
-//
-//    private void authenticate(String username, String password) throws Exception {
-//        try {
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-//        } catch (DisabledException e) {
-//            throw new Exception("USER_DISABLED", e);
-//        } catch (BadCredentialsException e) {
-//            throw new Exception("INVALID_CREDENTIALS", e);
-//        }
-//    }
-//}

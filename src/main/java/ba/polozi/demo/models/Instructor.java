@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @Entity
@@ -15,13 +16,14 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Instructor extends User {
-    @NotBlank
     private String car;
+
     public Instructor(InstructorRequest instructorRequest){
         setFirstName(instructorRequest.getFirstName());
         setLastName(instructorRequest.getLastName());
         setEmail(instructorRequest.getEmail());
         setPhoneNumber(instructorRequest.getPhoneNumber());
+        setUsername(instructorRequest.getUsername());
         setCar(instructorRequest.getCar());
     }
 }

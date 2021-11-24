@@ -1,5 +1,5 @@
 package ba.polozi.demo.models;
-import ba.polozi.demo.requests.ClientRequest;
+import ba.polozi.demo.requests.CandidateRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,19 +12,17 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Client extends User {
+public class Candidate extends User {
     @ManyToOne
     @JoinColumn(
             name = "instructor_id"
     )
     private Instructor instructor;
-
-
-    public Client(ClientRequest clientRequest, Instructor instructor){
-        setFirstName(clientRequest.getFirstName());
-        setLastName(clientRequest.getLastName());
-        setPhoneNumber(clientRequest.getPhoneNumber());
-        setEmail(clientRequest.getEmail());
+    public Candidate(CandidateRequest candidateRequest, Instructor instructor){
+        setFirstName(candidateRequest.getFirstName());
+        setLastName(candidateRequest.getLastName());
+        setPhoneNumber(candidateRequest.getPhoneNumber());
+        setEmail(candidateRequest.getEmail());
         setInstructor(instructor);
     }
 }

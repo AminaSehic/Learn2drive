@@ -106,7 +106,7 @@ public class QuestionController {
         q.setAnswer4("d");
         q.setImg_url("null");
         q.setIsTrueAnswer("b");
-        q.setText("da li je on vozac");
+        q.setText("Question?");
         q.setType("intersection");
         Question updated = questionService.saveQuestion(q);
         return ResponseEntity.ok().body(updated);

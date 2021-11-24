@@ -1,7 +1,6 @@
 package ba.polozi.demo.responses;
 
-import ba.polozi.demo.models.Client;
-import ba.polozi.demo.models.Instructor;
+import ba.polozi.demo.models.Candidate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientResponse {
+public class CandidateResponse {
 
     private Long id;
     private String firstName;
@@ -18,7 +17,7 @@ public class ClientResponse {
     private String phoneNumber;
     private InstructorResponse instructor;
 
-    public ClientResponse(Client c) {
+    public CandidateResponse(Candidate c) {
         this.id= c.getId();
         this.firstName = c.getFirstName();
         this.lastName = c.getLastName();

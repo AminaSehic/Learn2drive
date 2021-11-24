@@ -21,8 +21,10 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query(value = "SELECT * FROM question q WHERE q.type = 'general' ORDER BY random() LIMIT 10", nativeQuery = true)
     List<Question> randomGeneralQuestions();
+
     @Query(value = "SELECT * FROM question q WHERE q.type = 'sing' ORDER BY random() LIMIT 5", nativeQuery = true)
     List<Question> randomSingQuestions();
+
     @Query(value = "SELECT * FROM question q WHERE q.type = 'intersection' ORDER BY random() LIMIT 2", nativeQuery = true)
     List<Question> randomIntersectionQuestions();
 }

@@ -1,11 +1,13 @@
 package ba.polozi.demo.controllers;
 
+import ba.polozi.demo.models.Candidate;
 import ba.polozi.demo.models.ErrorMessage;
 import ba.polozi.demo.models.Exam;
 //import ba.polozi.demo.models.ExamQuestion;
 import ba.polozi.demo.models.Question;
 import ba.polozi.demo.requests.ExamRequest;
 //import ba.polozi.demo.services.ExamQuestionService;
+import ba.polozi.demo.services.CandidateService;
 import ba.polozi.demo.services.ExamService;
 import ba.polozi.demo.services.QuestionService;
 import lombok.AllArgsConstructor;
@@ -13,6 +15,9 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
@@ -27,13 +32,31 @@ public class ExamController {
     @Autowired
     public ExamService examService;
     public QuestionService questionService;
-//    public ExamQuestionService examQuestionService;
+    public CandidateService candidateService;
 
     @GetMapping("")
     public ResponseEntity<?> getExams() {
         List<Exam> exams = examService.findAll();
         return ResponseEntity.ok().body(exams);
     }
+
+    @GetMapping("amina")
+    public ResponseEntity<?> getUserExams() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<Exam> exams = new ArrayList<>();
+        if (principal instanceof UserDetails) {
+            String username = ((UserDetails) principal).getUsername();
+            Candidate c = candidateService.findCandidateByUsername(username);
+            exams = examService.findExamsByCandidateId(c.getId());
+        } else {
+            String username = principal.toString();
+            Candidate c = candidateService.findCandidateByUsername(username);
+            exams = examService.findExamsByCandidateId(c.getId());
+        }
+        return ResponseEntity.ok().body(exams);
+    }
+
 
     @GetMapping("{id}")
     public ResponseEntity<?> getExamById(@PathVariable Long id) {
@@ -59,8 +82,7 @@ public class ExamController {
         }
         return listapitanja;
     }
-
-    //post treba da kad se posalje post zahjev uzeti RANDOM iz baze pitanja, 20 teoretski, 10 znakova, 5 raskrsnica
+    //GENERATE RADOM 20, 10, 5 QUESTIONS
     @PostMapping("")
     public ResponseEntity<?> generateExam(@RequestBody ExamRequest examRequest) {
         try {
@@ -87,7 +109,6 @@ public class ExamController {
     @GetMapping("test")
     public ResponseEntity<?> test() {
         Exam exam = new Exam();
-        exam.setClientName("Amina");
         exam.setScore(100);
         Exam e = examService.saveExam(exam);
         return ResponseEntity.ok().body(e);
